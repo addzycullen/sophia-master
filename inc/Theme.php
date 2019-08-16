@@ -147,7 +147,7 @@ class Theme {
             new Clean_Theme\Component(),
             new Disable_Emoji\Component(),
             new Block_Editor\Component(),
-            // new Accessibility\Component(),
+            new Enable_Analytics\Component(),
             // new Image_Sizes\Component(),
             // new Lazyload\Component(),
             // new AMP\Component(),
