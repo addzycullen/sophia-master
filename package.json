@@ -1,0 +1,34 @@
+{
+    "name": "sophia",
+    "version": "1.0.0",
+    "description": "Sophia is Orbitals Modern WordPress Framework.",
+    "author": "Adam Cullen",
+    "license": "GPL-3.0",
+    "main": "index.php",
+    "homepage": "https://github.com/addzycullen/sophia-master#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/addzycullen/sophia-master.git"
+    },
+    "bugs": {
+        "url": "https://github.com/addzycullen/sophia-master/issues"
+    },
+    "devDependencies": {
+        "autoprefixer": "^9.5.1",
+        "cssnano": "^4.1.10",
+        "fancy-log": "^1.3.2",
+        "gulp": "^4.0.0",
+        "gulp-plumber": "^1.0.1",
+        "gulp-postcss": "^8.0.0",
+        "postcss-calc": "^7.0.1",
+        "postcss-preset-env": "^6.6.0",
+        "stylelint": "^9.10.1",
+        "stylelint-config-standard": "^18.0.0",
+        "gulp-sass": "^4.0.0",
+        "gulp-sourcemaps": "^1.6.0",
+        "gulp-util": "^3.0.5"
+    },
+    "stylelint": {
+        "extends": "stylelint-config-standard"
+    }
+}
