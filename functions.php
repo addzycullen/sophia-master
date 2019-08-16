@@ -30,7 +30,7 @@ require get_template_directory() . '/inc/wordpress-shims.php';
 // Check if Kirki is loaded as a plugin, if not load the included version.
 if ( ! class_exists( 'Kirki' ) ) {
     require_once get_template_directory() . '/inc/Kirki/kirki.php';
-}// Make Kirki's 'Output' attribute write to a CSS file rather than inlin in the page
+}
 
 // Bootstrap the theme.
 require_once get_template_directory() . '/inc/bootstrap.php';
