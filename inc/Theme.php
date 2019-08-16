@@ -150,8 +150,6 @@ class Theme {
             new Enable_Analytics\Component(),
             // new Image_Sizes\Component(),
             // new Lazyload\Component(),
-            // new AMP\Component(),
-            // new PWA\Component(),
             // new Comments\Component(),
             new Nav_Menus\Component(),
             // new Sidebars\Component(),
@@ -159,7 +157,7 @@ class Theme {
             new Custom_Logo\Component(),
             // new Post_Thumbnails\Component(),
             // new Customizer\Component(),
-            // new Styles\Component(),
+            new Enqueue_Assets\Component(),
         ];
 
         return $components;
