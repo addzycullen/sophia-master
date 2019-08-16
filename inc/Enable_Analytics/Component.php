@@ -12,11 +12,7 @@ namespace Sophia\Enable_Analytics;
 use Sophia\Component_Interface;
 use kirki;
 use function add_action;
-use function add_filter;
-use function add_theme_support;
 use function get_theme_mod;
-use function add_config;
-use function add_panel;
 use function add_section;
 use function add_field;
 
