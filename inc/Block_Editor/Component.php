@@ -34,7 +34,7 @@ class Component implements Component_Interface {
      */
     public function getSlug() : string
     {
-        return 'editor';
+        return 'block_editor';
     }
 
     /**
