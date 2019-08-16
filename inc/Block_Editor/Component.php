@@ -43,7 +43,7 @@ class Component implements Component_Interface {
     public function initialize()
     {
         add_action( 'init', [ $this, 'actionRegisterEditorCustomiserSettings' ] );
-        add_action( 'after_setup_theme', [ $this, 'actionAddBlockEditorSupport' ] );
+        add_action( 'init', [ $this, 'actionAddBlockEditorSupport' ] );
         add_filter( 'kirki/styles_array', [ $this, 'outputColorClassesForBlockEditor' ] );
     }
 
@@ -107,25 +107,25 @@ class Component implements Component_Interface {
                 [
                     'name'      => __( 'Small', 'sophia' ),
                     'shortName' => __( 'S', 'sophia' ),
-                    'size'      => 16,
+                    'size'      => get_theme_mod( 'sophia_block_editor_small_font_size' ),
                     'slug'      => 'small',
                 ],
                 [
-                    'name'      => __( 'Medium', 'sophia' ),
-                    'shortName' => __( 'M', 'sophia' ),
-                    'size'      => 25,
-                    'slug'      => 'medium',
+                    'name'      => __( 'Regular', 'sophia' ),
+                    'shortName' => __( 'R', 'sophia' ),
+                    'size'      => get_theme_mod( 'sophia_block_editor_medium_font_size' ),
+                    'slug'      => 'regular',
                 ],
                 [
                     'name'      => __( 'Large', 'sophia' ),
                     'shortName' => __( 'L', 'sophia' ),
-                    'size'      => 31,
+                    'size'      => get_theme_mod( 'sophia_block_editor_large_font_size' ),
                     'slug'      => 'large',
                 ],
                 [
                     'name'      => __( 'Larger', 'sophia' ),
                     'shortName' => __( 'XL', 'sophia' ),
-                    'size'      => 39,
+                    'size'      => get_theme_mod( 'sophia_block_editor_extra_large_font_size' ),
                     'slug'      => 'larger',
                 ],
             ]
@@ -185,7 +185,7 @@ class Component implements Component_Interface {
                     [
                         'element' => '.has-small-font-size',
                         'property' => 'font-size',
-                        'suffix' => 'px !important',
+                        'suffix' => 'px',
                     ],
                 ],
             ]
@@ -208,7 +208,7 @@ class Component implements Component_Interface {
                     [
                         'element' => '.has-regular-font-size',
                         'property' => 'font-size',
-                        'suffix' => 'px !important',
+                        'suffix' => 'px',
                     ],
                 ],
             ]
@@ -231,7 +231,7 @@ class Component implements Component_Interface {
                     [
                         'element' => '.has-large-font-size',
                         'property' => 'font-size',
-                        'suffix' => 'px !important',
+                        'suffix' => 'px',
                     ],
                 ],
             ]
@@ -254,7 +254,7 @@ class Component implements Component_Interface {
                     [
                         'element' => '.has-larger-font-size',
                         'property' => 'font-size',
-                        'suffix' => 'px !important',
+                        'suffix' => 'px',
                     ],
                 ],
             ]
