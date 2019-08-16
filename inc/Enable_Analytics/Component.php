@@ -67,7 +67,7 @@ class Component implements Component_Interface {
             [
                 'type'        => 'select',
                 'settings'    => 'sophia_analytics_type',
-                'label'       => esc_html__( 'Radio Control', 'sophia' ),
+                'label'       => esc_html__( 'Analytics Type', 'sophia' ),
                 'description' => esc_html__( 'Please choose what type of analytics you are using below, you will be presented with the appropiate fields once you have selected.', 'sophia' ),
                 'section'     => 'sophia_analytics_options',
                 'default'     => 'none',
