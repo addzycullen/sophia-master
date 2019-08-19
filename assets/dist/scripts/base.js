@@ -1,1 +1,2 @@
-console.log('boom');
+
+//# sourceMappingURL=base.js.map
