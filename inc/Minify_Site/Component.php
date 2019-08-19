@@ -61,6 +61,8 @@ class Component implements Component_Interface {
     /**
      * Modify Page output
      *
+     * W3C Fix and HTML minifier by Ivijan-Stefan Stipic <infinitumform@gmail.com>
+     *
      * @param string $buffer Html to be modified.
      *
      * @return $buffer Minified HTML.
