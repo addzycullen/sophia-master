@@ -18,7 +18,7 @@ http://codex.wordpress.org/Creating_Admin_Themes
     display: none;
 }
 .login {
-    background: url(../../images/orbital-login-screen-background-beach-blur-dark.jpg) no-repeat center center;
+    background: url(../img/orbital-login-screen-background-beach-blur-dark.jpg) no-repeat center center;
     background-size: cover;
     display: flex;
     align-items: center;
@@ -26,7 +26,7 @@ http://codex.wordpress.org/Creating_Admin_Themes
     background-color: #edf2f7;
 
     h1 {
-        background: url(../../images/orbital-login-screen-background-beach-mid-dark.jpg) no-repeat center center;
+        background: url(../img/orbital-login-screen-background-beach-mid-dark.jpg) no-repeat center center;
         position: relative;
         background-size: cover;
         display: flex;
@@ -37,7 +37,7 @@ http://codex.wordpress.org/Creating_Admin_Themes
         justify-content: center;
 
         a {
-            background: url(../../images/orbital-login-logo-white-refresher.svg) no-repeat center center;
+            background: url(../img/orbital-login-logo-white-refresher.svg) no-repeat center center;
             background-size: contain;
             width: 42%;
             text-indent: -9999px;
