@@ -159,6 +159,12 @@ class Theme {
             // new Post_Thumbnails\Component(),
             // new Customizer\Component(),
             new Enqueue_Assets\Component(),
+
+            // Plugin Extensions
+            // new Ninja_Forms\Component(),
+            // new Acf_Extend\Component(),
+
+            // FED Rendering
             new Minify_Site\Component(),
         ];
 
