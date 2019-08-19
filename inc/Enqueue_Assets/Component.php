@@ -8,7 +8,6 @@
 namespace Sophia\Enqueue_Assets;
 
 use Sophia\Component_Interface;
-use Sophia\Templating_Component_Interface;
 use function Sophia\sophia;
 use function add_action;
 use function add_filter;

@@ -1,0 +1,228 @@
+/******************************************************************
+
+Stylesheet: Login Stylesheet
+
+This stylesheet is loaded is only on the login page. This way you can style
+the login page. It won't affect any other page, admin or front-end.
+
+Make sure functions/admin.php is activated in your functions.php file.
+
+This stylesheet is turned off by default.
+
+For more info, check out the codex:
+http://codex.wordpress.org/Creating_Admin_Themes
+
+******************************************************************/
+// .forgetmenot,
+#backtoblog {
+    display: none;
+}
+.login {
+    background: url(../../images/orbital-login-screen-background-beach-blur-dark.jpg) no-repeat center center;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #edf2f7;
+
+    h1 {
+        background: url(../../images/orbital-login-screen-background-beach-mid-dark.jpg) no-repeat center center;
+        position: relative;
+        background-size: cover;
+        display: flex;
+        height: 14rem;
+        border-radius: 8px 8px 0 0;
+        padding: 0;
+        align-items: center;
+        justify-content: center;
+
+        a {
+            background: url(../../images/orbital-login-logo-white-refresher.svg) no-repeat center center;
+            background-size: contain;
+            width: 42%;
+            text-indent: -9999px;
+            overflow: hidden;
+            padding: 0px;
+            display: block;
+            opacity: 1;
+            margin: initial;
+        }
+    }
+
+    form {
+        padding: 1.5rem 1.5rem 1rem;
+        font-weight: 400;
+        overflow: hidden;
+        background: #fff;
+        margin-top: 0;
+        box-shadow: none;
+    }
+
+    #nav {
+        margin: 0 0 0 0;
+        background: #f7fafc;
+        font-size: 14px;
+        text-align: center;
+        padding: 1rem 2rem;
+        border-radius: 0 0 8px 8px;
+        border-top: 1px solid #e2e8f0;
+
+        a {
+            color: #252525;
+            font-weight: 200;
+            transition: all 0.15s ease;
+            &:hover {
+                color: #ff6500;
+            }
+        }
+    }
+}
+
+#login {
+    width: 360px;
+    padding: 0;
+    margin: auto;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    background: white;
+    border-radius: 8px;
+
+    .form-field {
+        margin: 0 0 1rem;
+        position: relative;
+
+        label {
+            position: absolute;
+
+            left: 12px;
+
+            z-index: 10;
+            display: block;
+            cursor: default;
+            line-height: 1;
+            z-index: 0;
+            color: #4a5568;
+            transition: all 0.25s ease-out;
+            font-size: 8px;
+            top: 10px;
+            transform: translateY(0%);
+        }
+
+        input {
+            margin: 0;
+            font-weight: 300;
+            font-size: 16px;
+            background: none;
+            padding: 18px 12px 0 !important;
+            height: 45px;
+            width: 100%;
+            outline: 0;
+            position: relative;
+            z-index: 1;
+            background: none;
+            border-radius: 4px;
+            border: 1px solid #f1f1f1;
+            box-shadow: 0 1px 0 0 hsla(0, 0%, 90%, 0.5);
+            transition: box-shadow 0.15s ease-out;
+
+            &[aria-describedby='login_error'] {
+                border: 1px solid #dc3232;
+                border-left: 3px solid #dc3232;
+            }
+
+            &::placeholder {
+                opacity: 0;
+            }
+
+            &:placeholder-shown {
+                + label {
+                    font-size: 14px;
+                    transition: all 0.25s ease-out;
+
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
+            }
+
+            &:focus {
+                + label {
+                    transition: all 0.25s ease-out;
+                    font-size: 8px;
+                    top: 10px;
+                    transform: none;
+                }
+            }
+        }
+    }
+
+    .forgetmenot {
+        margin: 8px 0 0;
+        position: relative;
+
+        label[for='rememberme'] {
+            margin: 0;
+            font-weight: 300;
+            font-size: 14px;
+            input[type='checkbox'] {
+                margin: 0 6px 0 0;
+                font-weight: 300;
+                font-size: 16px;
+                outline: 0;
+                z-index: 1;
+                background: none;
+                border-radius: 4px;
+                border: 1px solid #f1f1f1;
+                box-shadow: 0 1px 0 0 hsla(0, 0%, 90%, 0.5);
+                transition: box-shadow 0.15s ease-out;
+                padding: 0 !important;
+                height: 24px;
+                width: 24px;
+                position: relative;
+
+                &:checked:before {
+                    content: '\f147';
+                    margin: 0 auto;
+                    color: #ff6500;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    position: absolute;
+                    left: -1px;
+                    right: 0;
+                    width: 24px;
+                    font-size: 24px;
+                }
+            }
+        }
+    }
+}
+
+.wp-core-ui .button.button-large {
+    line-height: 40px;
+    padding: 0 1.5rem;
+    height: initial;
+    text-shadow: none;
+    font-size: 14px;
+    background: #ff6600;
+    border: none;
+    border-radius: 4px;
+    transform: translateZ(0);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+    backface-visibility: hidden;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+    transition-duration: 0.3s;
+    transition-property: color, background-color;
+
+    &:hover {
+        background: darken(#ff6500, 5%);
+    }
+}
+
+.login #login_error,
+.login .message,
+.login .success {
+    border-left: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    background: none !important;
+}

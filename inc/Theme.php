@@ -142,7 +142,7 @@ class Theme {
     protected function getDefaultComponents() : array
     {
         $components = [
-            // new Localization\Component(),
+            new Login_Screen\Component(),
             new Base_Support\Component(),
             new Clean_Theme\Component(),
             new Disable_Emoji\Component(),
