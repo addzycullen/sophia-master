@@ -28,6 +28,7 @@ use function get_template;
  * Exposes template tags:
  * * `sophia()->getVersion()`
  * * `sophia()->getAssetVersion( string $filepath )`
+ * * `sophia()->sanitizeOutput( string $buffer )`
  */
 class Component implements Component_Interface, Templating_Component_Interface {
 
@@ -66,6 +67,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
         return [
             'getVersion'       => [ $this, 'getVersion' ],
             'getAssetVersion' => [ $this, 'getAssetVersion' ],
+            'sanitizeOutput' => [ $this, 'sanitizeOutput' ],
         ];
     }
 
@@ -213,5 +215,34 @@ class Component implements Component_Interface, Templating_Component_Interface {
         }
 
         return $this->getVersion();
+    }
+
+    /**
+     * Sanitize Output
+     *
+     * @param string $buffer string of html.
+     *
+     * @return $buffer Modified HTML
+     */
+    public function sanitizeOutput( $buffer )
+    {
+
+        $search = array(
+            '/\>[^\S ]+/s',     // strip whitespaces after tags, except space
+            '/[^\S ]+\</s',     // strip whitespaces before tags, except space
+            '/(\s)+/s',         // shorten multiple whitespace sequences
+            '/<!--(.|\s)*?-->/', // Remove HTML comments
+        );
+
+        $replace = array(
+            '>',
+            '<',
+            '\\1',
+            '',
+        );
+
+        $buffer = preg_replace( $search, $replace, $buffer );
+
+        return $buffer;
     }
 }

@@ -18,7 +18,7 @@ use function get_theme_file_uri;
 use function get_theme_file_path;
 use function home_url;
 use function get_option;
-use function sanitize_output;
+use function DOMDocument;
 
 /**
  * Class for customising Default Login Screen.
@@ -43,7 +43,6 @@ class Component implements Component_Interface {
     public function initialize()
     {
         add_action( 'login_enqueue_scripts', [ $this, 'sophiaEnqueueLoginCss' ], 10 );
-        add_action( 'login_footer', [ $this, 'sophiaCheckRememberInput' ] );
         add_filter( 'login_headerurl', [ $this, 'sophiaChangeLoginLogoUrl' ] );
         add_filter( 'login_headertext', [ $this, 'sophiaChangeLoginLogoAltText' ] );
 
@@ -80,14 +79,6 @@ class Component implements Component_Interface {
     }
 
     /**
-     * Check remember me input
-     */
-    public function sophiaCheckRememberInput()
-    {
-        echo "<script>document.getElementById('rememberme').checked = true;</script>";
-    }
-
-    /**
      * Changing the logo link from wordpress.org to this site.
      */
     public function sophiaChangeLoginLogoUrl()
@@ -104,13 +95,46 @@ class Component implements Component_Interface {
     }
 
     /**
+     * Alter Output of the page
+     *
+     * @param string $buffer Page content as a string.
+     *
+     * @return $buffer
+     */
+    public function callback( $buffer )
+    {
+
+        $buffer = sophia()->sanitizeOutput( $buffer );
+        $buffer = preg_replace( '/<p>(.*?)<\/p>/', '<div class="form-field">$1</div>', $buffer );
+        $buffer = preg_replace( '/<p class="(.*?)">(.*?)<\/p>/', '<div class="$1">$2</div>', $buffer );
+        $buffer = str_replace( '<br />', '', $buffer );
+
+        $buffer = preg_replace(
+            '/<div class="form-field"><label for="(.*?)">(.*?)<input (.*?)><\/label><\/div>/',
+            '<div class="form-field"><input $3 placeholder="$2" \/><label for="$1">$2<\/label></div>',
+            $buffer
+        );
+
+        $dom = new \DOMDocument( '1.0', 'UTF-8' );
+        $internalErrors = libxml_use_internal_errors( true );
+        $dom->loadHTML( $buffer );
+        $dom->preserveWhiteSpace = false; //phpcs:ignore
+        $dom->loadHTML( $buffer );
+        $dom->formatOutput = true; //phpcs:ignore
+        libxml_use_internal_errors( $internalErrors );
+        $buffer = $dom->saveXML( $dom->documentElement ); //phpcs:ignore
+
+        return $buffer;
+    }
+
+    /**
      * Inititate Output buffering for the whole page.
      *
      * @return void
      */
     public function startPageOutputBuffering()
     {
-        ob_start( 'outputCallback' );
+        ob_start( array( 'self', 'callback' ) );
     }
 
     /**
@@ -123,36 +147,5 @@ class Component implements Component_Interface {
         ob_end_flush();
     }
 
-    /**
-     * Alter Output of the page
-     *
-     * @param string $buffer Page content as a string.
-     *
-     * @return $buffer
-     */
-    private function outputCallback( $buffer )
-    {
 
-        $buffer = sanitize_output( $buffer );
-        $buffer = preg_replace( '/<p>(.*?)<\/p>/', '<div class="form-field">$1</div>', $buffer );
-        $buffer = preg_replace( '/<p class="(.*?)">(.*?)<\/p>/', '<div class="$1">$2</div>', $buffer );
-        $buffer = str_replace( '<br />', '', $buffer );
-
-        $buffer = preg_replace(
-            '/<div class="form-field"><label for="(.*?)">(.*?)<input (.*?)><\/label><\/div>/',
-            '<div class="form-field"><input $3 placeholder="$2" \/><label for="$1">$2<\/label></div>',
-            $buffer
-        );
-
-        $dom = new DOMDocument( '1.0', 'UTF-8' );
-        $internalErrors = libxml_use_internal_errors( true );
-        $dom->loadHTML( $buffer );
-        $dom->preserveWhiteSpace = false; //phpcs:ignore
-        $dom->loadHTML( $buffer );
-        $dom->formatOutput = true; //phpcs:ignore
-        libxml_use_internal_errors( $internalErrors );
-        $buffer = $dom->saveXML( $dom->documentElement ); //phpcs:ignore
-
-        return $buffer;
-    }
 }
