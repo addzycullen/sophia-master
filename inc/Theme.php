@@ -146,12 +146,12 @@ class Theme {
             new Admin_Dashboard\Component(),
             new Login_Screen\Component(),
 
-            // WordPress Cleanup and Support
+            // WordPress Cleanup and Support.
             new Base_Support\Component(),
             new Clean_Theme\Component(),
             new Disable_Emoji\Component(),
 
-            // WordPress Enhancement
+            // WordPress Enhancement.
             new Block_Editor\Component(),
             new Enable_Analytics\Component(),
             // new Image_Sizes\Component(),
