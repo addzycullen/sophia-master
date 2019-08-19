@@ -13,15 +13,11 @@ use function Sophia\sophia;
 use function add_action;
 use function add_filter;
 use function wp_enqueue_style;
-use function wp_register_style;
+use function wp_enqueue_script;
 use function wp_style_add_data;
 use function get_theme_file_uri;
 use function get_theme_file_path;
-use function wp_styles;
-use function esc_attr;
-use function esc_url;
 use function wp_style_is;
-use function _doing_it_wrong;
 use function post_password_required;
 use function is_singular;
 use function comments_open;
@@ -30,9 +26,9 @@ use function apply_filters;
 use function add_query_arg;
 
 /**
- * Class for managing stylesheets.
+ * Class for managing scripts & stylesheets.
  */
-class Component implements Component_Interface, Templating_Component_Interface {
+class Component implements Component_Interface {
 
     /**
      * Associative array of CSS files, as $handle => $data pairs.
@@ -45,6 +41,16 @@ class Component implements Component_Interface, Templating_Component_Interface {
      * @var array
      */
     protected $css_files;
+
+    /**
+     * Associative array of JS files, as $handle => $data pairs.
+     * $data must be an array with keys 'file' (file path relative to 'assets/js' directory).
+     *
+     * Do not access this property directly, instead use the `getJsFiles()` method.
+     *
+     * @var array
+     */
+    protected $js_files;
 
     /**
      * Associative array of Google Fonts to load, as $font_name => $font_variants pairs.
@@ -62,7 +68,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
      */
     public function getSlug() : string
     {
-        return 'styles';
+        return 'enqueue_assets';
     }
 
     /**
@@ -71,91 +77,56 @@ class Component implements Component_Interface, Templating_Component_Interface {
     public function initialize()
     {
         add_action( 'wp_enqueue_scripts', [ $this, 'actionEnqueueStyles' ] );
-        add_action( 'wp_head', [ $this, 'actionPreloadStyles' ] );
+        add_action( 'wp_enqueue_scripts', [ $this, 'actionEnqueueScripts' ] );
         add_action( 'after_setup_theme', [ $this, 'actionAddEditorStyles' ] );
         add_filter( 'wp_resource_hints', [ $this, 'filterResourceHints' ], 10, 2 );
     }
 
     /**
-     * Registers or enqueues stylesheets.
+     * Registers or enqueues scripts.
      *
-     * Stylesheets that are global are enqueued. All other stylesheets are only registered, to be enqueued later.
+     * Scripts that are global are enqueued.
      */
-    public function actionEnqueueStyles()
+    public function actionEnqueueScripts()
     {
+        $js_uri = get_theme_file_uri( '/assets/dist/scripts/' );
+        $js_dir = get_theme_file_path( '/assets/dist/scripts/' );
 
-        // Enqueue Google Fonts.
-        $google_fonts_url = $this->getGoogleFontsUrl();
-        if ( ! empty( $google_fonts_url ) ) {
-            wp_enqueue_style( 'wp-rig-fonts', $google_fonts_url, [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-        }
+        $js_files = $this->getJsFiles();
+        foreach ( $js_files as $handle => $data ) {
+            $src     = $js_uri . $data['file'];
+            $version = sophia()->getAssetVersion( $js_dir . $data['file'] );
+            $deps    = $data['deps'];
+            $in_foot = $data['in_foot'];
 
-        $css_uri = get_theme_file_uri( '/assets/dist/css/' );
-        $css_dir = get_theme_file_path( '/assets/dist/css/' );
-
-        $preloading_styles_enabled = $this->preloadingStylesEnabled();
-
-        $css_files = $this->getCssFiles();
-        foreach ( $css_files as $handle => $data ) {
-            $src     = $css_uri . $data['file'];
-            $version = sophia()->get_asset_version( $css_dir . $data['file'] );
-
-            /*
-             * Enqueue global stylesheets immediately and register the other ones for later use
-             * (unless preloading stylesheets is disabled, in which case stylesheets should be immediately
-             * enqueued based on whether they are necessary for the page content).
-             */
-            if ( $data['global'] || ! $preloading_styles_enabled && is_callable( $data['preload_callback'] ) && call_user_func( $data['preload_callback'] ) ) {
-                wp_enqueue_style( $handle, $src, [], $version, $data['media'] );
-            } else {
-                wp_register_style( $handle, $src, [], $version, $data['media'] );
-            }
-
-            wp_style_add_data( $handle, 'precache', true );
+            wp_enqueue_script( $handle, $src, $deps, $version, $in_foot );
         }
     }
 
     /**
-     * Preloads in-body stylesheets depending on what templates are being used.
+     * Registers or enqueues stylesheets.
      *
-     * Only stylesheets that have a 'preload_callback' provided will be considered. If that callback evaluates to true
-     * for the current request, the stylesheet will be preloaded.
-     *
-     * Preloading is disabled when AMP is active, as AMP injects the stylesheets inline.
-     *
-     * @link https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content
+     * Stylesheets that are global are enqueued.
      */
-    public function actionPreloadStyles()
+    public function actionEnqueueStyles()
     {
-
-        // If preloading styles is disabled, return early.
-        if ( ! $this->preloadingStylesEnabled() ) {
-            return;
+        // Enqueue Google Fonts.
+        $google_fonts_url = $this->getGoogleFontsUrl();
+        if ( ! empty( $google_fonts_url ) ) {
+            wp_enqueue_style( 'sophia-fonts', $google_fonts_url, [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
         }
 
-        $wp_styles = wp_styles();
+        $css_uri = get_theme_file_uri( '/assets/dist/styles/' );
+        $css_dir = get_theme_file_path( '/assets/dist/styles/' );
 
         $css_files = $this->getCssFiles();
         foreach ( $css_files as $handle => $data ) {
-            // Skip if stylesheet not registered.
-            if ( ! isset( $wp_styles->registered[ $handle ] ) ) {
-                continue;
-            }
+            $src     = $css_uri . $data['file'];
+            $version = sophia()->getAssetVersion( $css_dir . $data['file'] );
 
-            // Skip if no preload callback provided.
-            if ( ! is_callable( $data['preload_callback'] ) ) {
-                continue;
-            }
+            wp_enqueue_style( $handle, $src, [], $version, $data['media'] );
 
-            // Skip if preloading is not necessary for this request.
-            if ( ! call_user_func( $data['preload_callback'] ) ) {
-                continue;
-            }
-
-            $preload_uri = $wp_styles->registered[ $handle ]->src . '?ver=' . $wp_styles->registered[ $handle ]->ver;
-
-            echo '<link rel="preload" id="' . esc_attr( $handle ) . '-preload" href="' . esc_url( $preload_uri ) . '" as="style">';
-            echo "\n";
+            wp_style_add_data( $handle, 'precache', true );
         }
     }
 
@@ -184,7 +155,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
      */
     public function filterResourceHints( array $urls, string $relation_type ) : array
     {
-        if ( 'preconnect' === $relation_type && wp_style_is( 'wp-rig-fonts', 'queue' ) ) {
+        if ( 'preconnect' === $relation_type && wp_style_is( 'sophia-fonts', 'queue' ) ) {
             $urls[] = [
                 'href' => 'https://fonts.gstatic.com',
                 'crossorigin',
@@ -195,23 +166,45 @@ class Component implements Component_Interface, Templating_Component_Interface {
     }
 
     /**
-     * Determines whether to preload stylesheets and inject their link tags directly within the page content.
+     * Gets all JS files.
      *
-     * Using this technique generally improves performance, however may not be preferred under certain circumstances.
-     * For example, since AMP will include all style rules directly in the head, it must not be used in that context.
-     * By default, this method returns true unless the page is being served in AMP. The
-     * {@see 'sophia_preloading_styles_enabled'} filter can be used to tweak the return value.
-     *
-     * @return bool True if preloading stylesheets and injecting them is enabled, false otherwise.
+     * @return array Associative array of $handle => $data pairs.
      */
-    protected function preloadingStylesEnabled()
+    protected function getJsFiles() : array
     {
-        /**
-         * Filters whether to preload stylesheets and inject their link tags within the page content.
-         *
-         * @param bool $preloading_styles_enabled Whether preloading stylesheets and injecting them is enabled.
-         */
-        return apply_filters( 'sophia_preloading_styles_enabled', $preloading_styles_enabled );
+        if ( is_array( $this->js_files ) ) {
+            return $this->js_files;
+        }
+
+        $js_files = [
+            'sophia-global' =>
+            [
+                'file'    => 'base.js',
+                'deps'    => [],
+                'in_foot' => true,
+            ],
+        ];
+
+        $this->js_files = [];
+        foreach ( $js_files as $handle => $data ) {
+            if ( is_string( $data ) ) {
+                $data = [ 'file' => $data ];
+            }
+
+            if ( empty( $data['file'] ) ) {
+                continue;
+            }
+
+            $this->js_files[ $handle ] = array_merge(
+                [
+                    'deps'    => [],
+                    'in_foot' => true,
+                ],
+                $data
+            );
+        }
+
+        return $this->js_files;
     }
 
     /**
@@ -226,39 +219,16 @@ class Component implements Component_Interface, Templating_Component_Interface {
         }
 
         $css_files = [
-            'wp-rig-global'     => [
-                'file'   => 'global.min.css',
+            'sophia-global'     => [
+                'file'   => 'base.css',
                 'global' => true,
             ],
-            'wp-rig-comments'   => [
-                'file'             => 'comments.min.css',
-                'preload_callback' => function () {
-                    return ! post_password_required() && is_singular() && ( comments_open() || get_comments_number() );
-                },
-            ],
-            'wp-rig-content'    => [
-                'file'             => 'content.min.css',
-                'preload_callback' => '__return_true',
-            ],
-            'wp-rig-sidebar'    => [
-                'file'             => 'sidebar.min.css',
-                'preload_callback' => function () {
-                    return sophia()->is_primary_sidebar_active();
-                },
-            ],
-            'wp-rig-widgets'    => [
-                'file'             => 'widgets.min.css',
-                'preload_callback' => function () {
-                    return sophia()->is_primary_sidebar_active();
-                },
-            ],
-            'wp-rig-front-page' => [
-                'file' => 'front-page.min.css',
-                'preload_callback' => function () {
-                    global $template;
-                    return 'front-page.php' === basename( $template );
-                },
-            ],
+            // 'sophia-comments'   => [
+            // 'file'             => 'comments.css',
+            // 'preload_callback' => function () {
+            // return ! post_password_required() && is_singular() && ( comments_open() || get_comments_number() );
+            // },
+            // ],
         ];
 
         /**
@@ -285,7 +255,6 @@ class Component implements Component_Interface, Templating_Component_Interface {
             $this->css_files[ $handle ] = array_merge(
                 [
                     'global'           => false,
-                    'preload_callback' => null,
                     'media'            => 'all',
                 ],
                 $data
@@ -307,8 +276,8 @@ class Component implements Component_Interface, Templating_Component_Interface {
         }
 
         $google_fonts = [
-            'Roboto Condensed' => [ '400', '400i', '700', '700i' ],
-            'Crimson Text'     => [ '400', '400i', '600', '600i' ],
+            'IBM+Plex+Sans'  => [ '200', '300', '400', '700', '700' ],
+            'IBM+Plex+Serif' => [ '500' ],
         ];
 
         /**
