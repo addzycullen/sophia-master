@@ -159,6 +159,7 @@ class Theme {
             // new Post_Thumbnails\Component(),
             // new Customizer\Component(),
             new Enqueue_Assets\Component(),
+            new Minify_Site\Component(),
         ];
 
         return $components;
