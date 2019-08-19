@@ -12,6 +12,7 @@ namespace Sophia\Login_Screen;
 use Sophia\Component_Interface;
 use function Sophia\sophia;
 use function add_action;
+use function add_filter;
 use function wp_enqueue_style;
 use function get_template_directory_uri;
 use function get_theme_file_uri;
