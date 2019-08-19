@@ -56,7 +56,7 @@ gulp.task('scripts', function() {
         .pipe(jshint())
         .pipe(jshint.reporter('jshint-stylish'))
         .pipe(concat('base.js'))
-        .pipe(gulp.dest('./assets/dists/scripts'))
+        .pipe(gulp.dest('./assets/dist/scripts'))
         .pipe(uglify())
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('./assets/dist/scripts'));
